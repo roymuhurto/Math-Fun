@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mega Math Challenge</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;600&display=swap");
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: url("Screenshot 2025-08-03 123332.png") no-repeat center
+          center fixed;
+        background-size: cover;
+        color: #222;
+        text-align: center;
+        margin: 0;
+        padding: 10px;
+        font-weight: bolder;
+        font-size: large;
+      }
+
+      #loadingScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #fff6e6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 9999;
+        animation: popIn 0.8s ease;
+      }
+
+      @keyframes popIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      #loadingRocket {
+        width: 15vw;
+        max-width: 100px;
+        animation: spin 2s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        font-size: 6vw;
+        font-weight: bold;
+        color: #ff6600;
+        animation: bounce 1s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #ff6600;
+        font-family: "Fredoka One", cursive;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .active {
+        display: block;
+      }
+
+      button {
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        margin: 10px;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 12px;
+        background-color: #5170ff;
+        color: #fff;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        width: 90%;
+        max-width: 300px;
+      }
+
+      button:hover {
+        transform: scale(1.05);
+      }
+
+      input,
+      select {
+        font-size: 1rem;
+        padding: 10px;
+        margin: 8px auto;
+        border: 2px solid #ff6600;
+        border-radius: 10px;
+        background-color: #fff;
+        color: #222;
+        display: block;
+        width: 90%;
+        max-width: 300px;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .card {
+        background: linear-gradient(145deg, #fefcea, #f1daae);
+        border-radius: 20px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 400px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      #tableOutput {
+        background-color: #fffbe9;
+        border-radius: 15px;
+        padding: 15px;
+        margin-top: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .fox-container {
+        background: url("fox.png") no-repeat center top;
+        background-size: contain;
+        width: 100%;
+        max-width: 220px;
+        height: 500px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .fox-box-text {
+        position: absolute;
+        top: 170px;
+        left: 10px;
+        right: 10px;
+        bottom: 20px;
+        padding: 5px;
+        overflow-y: auto;
+        text-align: center;
+        font-weight: bolder;
+        font-size: 18px;
+        color: #222;
+      }
+
+      .math-table {
+        width: 100%;
+        font-size: 18px;
+        font-weight: bolder;
+        border-collapse: collapse;
+      }
+
+      .math-table td {
+        padding: 2px 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loadingScreen">
+      <img id="loadingRocket" src="rocket_1f680.png" alt="Rocket" />
+      <div class="loading-text">Loading...</div>
+    </div>
+
+    <h1>Mega Math Challenge</h1>
+    <button onclick="showScreen('quizScreen')">Start Quiz</button>
+    <button onclick="showScreen('tableScreen')">Tables</button>
+    <button onclick="showScreen('raceScreen')">Race</button>
+    <button onclick="showScreen('fractionsScreen')">Fractions</button>
+    <button onclick="showScreen('patternsScreen')">Patterns</button>
+    <button onclick="showScreen('calcScreen')">Calculator</button>
+    <button onclick="showScreen('funFactScreen')">Fun Facts</button>
+
+    <div id="quizScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Simple Quiz</h2>
+        <div id="quizQ"></div>
+        <input id="quizInput" type="text" placeholder="Your answer" />
+        <button onclick="checkQuizAnswer()">Check</button>
+        <div id="quizFeedback"></div>
+      </div>
+    </div>
+
+    <div id="tableScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Tables</h2>
+        <input id="tableInput" type="number" placeholder="Enter number" />
+        <button onclick="showTable()">Show Table</button>
+        <div id="tableOutput"></div>
+      </div>
+    </div>
+
+    <div id="raceScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Math Race</h2>
+        <div
+          id="raceTimer"
+          style="font-size: 20px; margin-bottom: 10px; color: red"
+        ></div>
+        <div id="raceQ"></div>
+        <input id="raceInput" type="text" placeholder="Answer fast!" />
+        <button onclick="checkRace()">Submit</button>
+        <div id="raceFeedback"></div>
+      </div>
+    </div>
+
+    <div id="fractionsScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Fractions</h2>
+        <input id="num1" type="number" placeholder="Numerator" />
+        <input id="den1" type="number" placeholder="Denominator" />
+        <input id="num2" type="number" placeholder="Numerator" />
+        <input id="den2" type="number" placeholder="Denominator" />
+        <button onclick="compareFractions()">Compare</button>
+        <div id="fractionResult"></div>
+      </div>
+    </div>
+
+    <div id="patternsScreen" class="screen fade-in active">
+      <div class="card">
+        <h2>Number Patterns</h2>
+        <div id="patternQ" style="font-size: 22px; margin: 15px 0"></div>
+        <button onclick="showPattern()">Show New Pattern</button>
+      </div>
+    </div>
+
+    <div id="calcScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Calculator</h2>
+        <input id="calcInput1" type="number" placeholder="First Number" />
+        <input id="calcInput2" type="number" placeholder="Second Number" />
+        <select id="calcOp">
+          <option value="+">+</option>
+          <option value="-">−</option>
+          <option value="*">×</option>
+          <option value="/">÷</option>
+        </select>
+        <button onclick="calculate()">Calculate</button>
+        <div id="calcResult"></div>
+      </div>
+    </div>
+
+    <div id="funFactScreen" class="screen fade-in">
+      <div class="card">
+        <h2>Fun Math Fact</h2>
+        <button onclick="showFunFact()">Show Fact</button>
+        <div id="funFact"></div>
+      </div>
+    </div>
+
+    <!-- 🔊 Sound Effects -->
+    <audio id="correctSound" src="correct.mp3"></audio>
+    <audio id="wrongSound" src="wrong.mp3"></audio>
+
+    <script>
+      function showScreen(id) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+
+      const quizQuestions = [
+        { q: "What is 5 + 3?", a: "8" },
+        { q: "What is 7 x 2?", a: "14" },
+        { q: "What is 12 - 4?", a: "8" },
+      ];
+      let quizIndex = 0;
+      function showQuiz() {
+        document.getElementById("quizQ").textContent =
+          quizQuestions[quizIndex].q;
+        document.getElementById("quizInput").value = "";
+        document.getElementById("quizFeedback").textContent = "";
+      }
+
+      function checkQuizAnswer() {
+        const userAns = document.getElementById("quizInput").value;
+        const correct = quizQuestions[quizIndex].a;
+        const correctSound = document.getElementById("correctSound");
+        const wrongSound = document.getElementById("wrongSound");
+
+        if (userAns === correct) {
+          document.getElementById("quizFeedback").textContent = "✅ Correct!";
+          correctSound.play();
+        } else {
+          document.getElementById("quizFeedback").textContent = "❌ Try again!";
+          wrongSound.play();
+        }
+
+        quizIndex = (quizIndex + 1) % quizQuestions.length;
+        setTimeout(showQuiz, 1000);
+      }
+
+      function showTable() {
+        const num = parseInt(document.getElementById("tableInput").value);
+        let result = "";
+
+        if (!isNaN(num)) {
+          result += `
+            <div class="fox-container">
+              <div class="fox-box-text">
+                <table class="math-table">
+                  <tbody>
+                    ${[...Array(10).keys()]
+                      .map(
+                        (i) =>
+                          `<tr><td>${num}</td><td>×</td><td>${
+                            i + 1
+                          }</td><td>=</td><td>${num * (i + 1)}</td></tr>`
+                      )
+                      .join("")}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        } else {
+          result = "Please enter a valid number.";
+        }
+
+        document.getElementById("tableOutput").innerHTML = result;
+      }
+
+      let raceAnswer;
+      let raceTimeLeft;
+      let raceTimerInterval;
+
+      function startRaceTimer() {
+        clearInterval(raceTimerInterval);
+        raceTimeLeft = 20;
+        document.getElementById(
+          "raceTimer"
+        ).textContent = `⏱️ Time Left: ${raceTimeLeft}s`;
+
+        raceTimerInterval = setInterval(() => {
+          raceTimeLeft--;
+          document.getElementById(
+            "raceTimer"
+          ).textContent = `⏱️ Time Left: ${raceTimeLeft}s`;
+
+          if (raceTimeLeft <= 0) {
+            clearInterval(raceTimerInterval);
+            document.getElementById("raceFeedback").textContent =
+              "⏰ Time's up!";
+            setTimeout(newRaceQ, 1500);
+          }
+        }, 1000);
+      }
+
+      function newRaceQ() {
+        const a = Math.floor(Math.random() * 10);
+        const b = Math.floor(Math.random() * 10);
+        raceAnswer = a + b;
+        document.getElementById("raceQ").textContent = `What is ${a} + ${b}?`;
+        document.getElementById("raceInput").value = "";
+        document.getElementById("raceFeedback").textContent = "";
+        startRaceTimer();
+      }
+
+      function checkRace() {
+        clearInterval(raceTimerInterval);
+        const val = parseInt(document.getElementById("raceInput").value);
+        const correctSound = document.getElementById("correctSound");
+        const wrongSound = document.getElementById("wrongSound");
+
+        if (val === raceAnswer) {
+          document.getElementById("raceFeedback").textContent = "✅ Correct!";
+          correctSound.play();
+        } else {
+          document.getElementById("raceFeedback").textContent = "❌ Try again!";
+          wrongSound.play();
+        }
+
+        setTimeout(newRaceQ, 1000);
+      }
+
+      function compareFractions() {
+        const n1 = parseInt(document.getElementById("num1").value);
+        const d1 = parseInt(document.getElementById("den1").value);
+        const n2 = parseInt(document.getElementById("num2").value);
+        const d2 = parseInt(document.getElementById("den2").value);
+        const val1 = n1 / d1;
+        const val2 = n2 / d2;
+        let result =
+          val1 === val2
+            ? "Both are equal"
+            : val1 > val2
+            ? "First is greater"
+            : "Second is greater";
+        document.getElementById("fractionResult").textContent = result;
+      }
+
+      const patterns = [
+        "2, 4, 6, 8, 10 → Add 2 each time",
+        "5, 10, 15, 20, 25 → Multiples of 5",
+        "1, 4, 9, 16, 25 → Perfect squares",
+        "1, 2, 4, 8, 16 → Multiply by 2",
+        "10, 9, 8, 7, 6 → Subtract 1",
+        "1, 3, 6, 10, 15 → Triangular numbers",
+        "2, 3, 5, 7, 11 → Prime numbers",
+        "100, 90, 80, 70, 60 → Subtract 10",
+        "1, 1, 2, 3, 5, 8 → Fibonacci sequence",
+      ];
+      function showPattern() {
+        const random = patterns[Math.floor(Math.random() * patterns.length)];
+        document.getElementById("patternQ").textContent = random;
+      }
+
+      function calculate() {
+        const a = parseFloat(document.getElementById("calcInput1").value);
+        const b = parseFloat(document.getElementById("calcInput2").value);
+        const op = document.getElementById("calcOp").value;
+        let res = "";
+        switch (op) {
+          case "+":
+            res = a + b;
+            break;
+          case "-":
+            res = a - b;
+            break;
+          case "*":
+            res = a * b;
+            break;
+          case "/":
+            res = b !== 0 ? a / b : "∞";
+            break;
+        }
+        document.getElementById("calcResult").textContent = `Result: ${res}`;
+      }
+
+      const funFacts = [
+        "A circle has infinite lines of symmetry!",
+        "Zero is the only number that can't be written in Roman numerals.",
+        "The number 9 is a magical number in math.",
+        "A googol is 1 followed by 100 zeros!",
+      ];
+      function showFunFact() {
+        const fact = funFacts[Math.floor(Math.random() * funFacts.length)];
+        document.getElementById("funFact").textContent = fact;
+      }
+
+      window.onload = function () {
+        setTimeout(() => {
+          document.getElementById("loadingScreen").style.display = "none";
+          showPattern();
+          showQuiz();
+          newRaceQ();
+        }, 1500);
+      };
+    </script>
+  </body>
+</html>
